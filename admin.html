@@ -1,0 +1,666 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | GYTO Success Company</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary:   #1a2a6c;
+      --mid:       #243696;
+      --secondary: #f5821f;
+      --accent:    #f5c200;
+      --dark:      #0d1530;
+      --light:     #f4f6fb;
+      --white:     #ffffff;
+      --green:     #2d7a4f;
+      --red:       #c0392b;
+      --radius:    8px;
+      --shadow:    0 4px 24px rgba(13,21,48,0.13);
+    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light); color: #1a1a2e; }
+
+    /* ── LOGIN SCREEN ── */
+    #loginScreen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+    }
+    .login-card {
+      background: var(--white); border-radius: 16px; padding: 48px 40px;
+      width: 100%; max-width: 420px; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+    .login-card img { height: 70px; margin: 0 auto 16px; }
+    .login-card h2 { font-size: 1.3rem; color: var(--primary); margin-bottom: 6px; }
+    .login-card p  { font-size: 0.85rem; color: #666; margin-bottom: 28px; }
+    .login-card input {
+      width: 100%; padding: 13px 16px; border: 2px solid #e0e0e0;
+      border-radius: var(--radius); font-size: 1rem; margin-bottom: 16px;
+      outline: none; transition: border 0.2s;
+    }
+    .login-card input:focus { border-color: var(--secondary); }
+    .login-card button {
+      width: 100%; padding: 14px; background: var(--primary); color: #fff;
+      border: none; border-radius: var(--radius); font-size: 1rem;
+      font-weight: 700; cursor: pointer; transition: background 0.2s;
+    }
+    .login-card button:hover { background: var(--mid); }
+    #loginError { color: var(--red); font-size: 0.85rem; margin-top: 12px; display: none; }
+
+    /* ── DASHBOARD ── */
+    #dashboard { display: none; min-height: 100vh; }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0; width: 240px;
+      background: linear-gradient(180deg, var(--dark) 0%, var(--primary) 100%);
+      padding: 0; z-index: 100; display: flex; flex-direction: column;
+    }
+    .sidebar-logo {
+      display: flex; align-items: center; gap: 10px;
+      padding: 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidebar-logo img { height: 36px; }
+    .sidebar-logo span { font-size: 0.78rem; font-weight: 700; color: #fff; line-height: 1.3; }
+    .sidebar-nav { flex: 1; padding: 20px 0; }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 24px; color: rgba(255,255,255,0.7);
+      font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; border-left: 3px solid transparent;
+    }
+    .nav-item:hover, .nav-item.active {
+      color: #fff; background: rgba(255,255,255,0.08);
+      border-left-color: var(--secondary);
+    }
+    .nav-item i { width: 18px; text-align: center; font-size: 0.95rem; }
+    .nav-badge {
+      margin-left: auto; background: var(--secondary); color: var(--dark);
+      font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 20px;
+    }
+    .sidebar-footer {
+      padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidebar-footer button {
+      width: 100%; padding: 10px; background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius); font-size: 0.83rem; cursor: pointer;
+      font-weight: 600; transition: all 0.2s;
+    }
+    .sidebar-footer button:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+    /* Main area */
+    .main { margin-left: 240px; padding: 32px; }
+
+    /* Top bar */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .topbar h1 { font-size: 1.5rem; color: var(--primary); font-weight: 800; }
+    .topbar-actions { display: flex; gap: 10px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 18px; border-radius: var(--radius);
+      font-size: 0.85rem; font-weight: 700; cursor: pointer; border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary   { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--mid); }
+    .btn-orange    { background: var(--secondary); color: var(--dark); }
+    .btn-orange:hover  { background: #e0720f; }
+    .btn-green     { background: var(--green); color: #fff; }
+    .btn-green:hover   { background: #24633f; }
+    .btn-red       { background: var(--red); color: #fff; font-size: 0.78rem; padding: 6px 12px; }
+    .btn-red:hover { background: #a93226; }
+    .btn-sm        { padding: 5px 10px; font-size: 0.75rem; }
+
+    /* Stat cards */
+    .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; margin-bottom: 28px; }
+    .stat-card {
+      background: var(--white); border-radius: var(--radius); padding: 20px 24px;
+      box-shadow: var(--shadow); display: flex; align-items: center; gap: 16px;
+    }
+    .stat-icon {
+      width: 50px; height: 50px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .stat-icon.blue   { background: rgba(26,42,108,0.12); color: var(--primary); }
+    .stat-icon.orange { background: rgba(245,130,31,0.15); color: var(--secondary); }
+    .stat-icon.green  { background: rgba(45,122,79,0.15);  color: var(--green); }
+    .stat-icon.gold   { background: rgba(245,194,0,0.18);  color: #b8860b; }
+    .stat-num  { font-size: 1.8rem; font-weight: 900; color: var(--primary); line-height: 1; }
+    .stat-label{ font-size: 0.78rem; color: #888; font-weight: 600; margin-top: 4px; }
+
+    /* Table panel */
+    .panel {
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 24px; border-bottom: 2px solid var(--light);
+    }
+    .panel-header h3 { font-size: 1rem; color: var(--primary); font-weight: 800; }
+    .panel-search {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .panel-search input {
+      padding: 8px 14px; border: 1.5px solid #ddd; border-radius: var(--radius);
+      font-size: 0.85rem; outline: none; width: 220px;
+    }
+    .panel-search input:focus { border-color: var(--secondary); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    thead th {
+      background: var(--light); padding: 12px 16px;
+      text-align: left; font-weight: 700; color: var(--primary);
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
+    tbody tr:hover { background: #fdf5ec; }
+    tbody td { padding: 12px 16px; vertical-align: middle; max-width: 200px; word-break: break-word; }
+
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    }
+    .badge-new      { background: rgba(245,130,31,0.15); color: #c05e00; }
+    .badge-read     { background: rgba(26,42,108,0.12);  color: var(--primary); }
+    .badge-replied  { background: rgba(45,122,79,0.15);  color: var(--green); }
+    .badge-archived { background: #f0f0f0; color: #888; }
+
+    .tab-bar { display: flex; gap: 0; border-bottom: 2px solid var(--light); }
+    .tab {
+      padding: 14px 28px; font-size: 0.88rem; font-weight: 700;
+      color: #888; cursor: pointer; border-bottom: 3px solid transparent;
+      transition: all 0.2s; margin-bottom: -2px;
+    }
+    .tab.active { color: var(--primary); border-bottom-color: var(--secondary); }
+
+    /* Detail modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 200;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--white); border-radius: 12px; padding: 32px;
+      width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto;
+      position: relative;
+    }
+    .modal h3 { font-size: 1.1rem; color: var(--primary); margin-bottom: 20px; font-weight: 800; }
+    .modal-close {
+      position: absolute; top: 16px; right: 20px;
+      background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #888;
+    }
+    .detail-row { display: flex; gap: 12px; margin-bottom: 10px; font-size: 0.88rem; }
+    .detail-label { font-weight: 700; color: var(--primary); min-width: 150px; flex-shrink: 0; }
+    .detail-val { color: #444; }
+    .detail-divider { border: none; border-top: 1px solid #eee; margin: 14px 0; }
+
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: #aaa;
+    }
+    .empty-state i { font-size: 3rem; margin-bottom: 12px; display: block; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* Page sections */
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+
+    @media (max-width: 900px) {
+      .sidebar { width: 60px; }
+      .sidebar-logo span, .nav-item span, .sidebar-footer { display: none; }
+      .nav-item { justify-content: center; padding: 16px; }
+      .main { margin-left: 60px; padding: 20px; }
+      .stats-row { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <img src="images/logo.png" alt="GYTO Logo" />
+    <h2>Admin Dashboard</h2>
+    <p>GYTO SUCCESS COMPANY LIMITED – Secure Area</p>
+    <input type="text"     id="loginUser" placeholder="Username"  autocomplete="off" />
+    <input type="password" id="loginPass" placeholder="Password"  autocomplete="off" />
+    <button onclick="doLogin()"><i class="fas fa-lock" style="margin-right:8px;"></i>Sign In</button>
+    <p id="loginError"><i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i>Invalid credentials. Please try again.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     DASHBOARD
+══════════════════════════════════════════════ -->
+<div id="dashboard">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="images/logo.png" alt="GYTO" />
+      <span>GYTO Admin<br>Dashboard</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="showPage('overview')" id="nav-overview">
+        <i class="fas fa-chart-pie"></i><span>Overview</span>
+      </div>
+      <div class="nav-item" onclick="showPage('enquiries')" id="nav-enquiries">
+        <i class="fas fa-envelope"></i><span>Enquiries</span>
+        <span class="nav-badge" id="badgeEnquiries">0</span>
+      </div>
+      <div class="nav-item" onclick="showPage('applications')" id="nav-applications">
+        <i class="fas fa-user-tie"></i><span>Applications</span>
+        <span class="nav-badge" id="badgeApplications">0</span>
+      </div>
+      <div class="nav-item" onclick="showPage('export')" id="nav-export">
+        <i class="fas fa-download"></i><span>Export Data</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button onclick="doLogout()"><i class="fas fa-sign-out-alt" style="margin-right:8px;"></i>Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- ── OVERVIEW ── -->
+    <section class="page-section active" id="page-overview">
+      <div class="topbar">
+        <h1><i class="fas fa-chart-pie" style="margin-right:10px;color:var(--secondary);"></i>Overview</h1>
+        <div class="topbar-actions">
+          <span style="font-size:0.83rem;color:#888;" id="lastRefresh"></span>
+          <button class="btn btn-orange" onclick="refreshAll()"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+      </div>
+
+      <div class="stats-row" id="statsRow"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:4px;">
+        <div class="panel">
+          <div class="panel-header"><h3><i class="fas fa-envelope" style="margin-right:8px;color:var(--secondary);"></i>Latest Enquiries</h3></div>
+          <div id="latestEnquiries"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><h3><i class="fas fa-user-tie" style="margin-right:8px;color:var(--secondary);"></i>Latest Applications</h3></div>
+          <div id="latestApplications"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ENQUIRIES ── -->
+    <section class="page-section" id="page-enquiries">
+      <div class="topbar">
+        <h1><i class="fas fa-envelope" style="margin-right:10px;color:var(--secondary);"></i>Contact Enquiries</h1>
+        <div class="topbar-actions">
+          <button class="btn btn-green" onclick="GYTODB.exportCSV('enquiry')"><i class="fas fa-file-csv"></i> Export CSV</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <h3>All Enquiries</h3>
+          <div class="panel-search">
+            <input type="text" id="searchEnquiry" placeholder="Search by name, email, service…" oninput="renderEnquiries()" />
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th><th>Date</th><th>Name</th><th>Email</th><th>Phone</th><th>Service</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="enquiriesBody"></tbody>
+          </table>
+          <div id="enquiriesEmpty" class="empty-state" style="display:none;">
+            <i class="fas fa-inbox"></i><p>No enquiries recorded yet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── APPLICATIONS ── -->
+    <section class="page-section" id="page-applications">
+      <div class="topbar">
+        <h1><i class="fas fa-user-tie" style="margin-right:10px;color:var(--secondary);"></i>Job Applications</h1>
+        <div class="topbar-actions">
+          <button class="btn btn-green" onclick="GYTODB.exportCSV('application')"><i class="fas fa-file-csv"></i> Export CSV</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <h3>All Applications</h3>
+          <div class="panel-search">
+            <input type="text" id="searchApplication" placeholder="Search by name, email, phone…" oninput="renderApplications()" />
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th><th>Date</th><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="applicationsBody"></tbody>
+          </table>
+          <div id="applicationsEmpty" class="empty-state" style="display:none;">
+            <i class="fas fa-user-slash"></i><p>No applications recorded yet.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── EXPORT ── -->
+    <section class="page-section" id="page-export">
+      <div class="topbar">
+        <h1><i class="fas fa-download" style="margin-right:10px;color:var(--secondary);"></i>Export Data</h1>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+        <div class="panel" style="padding:32px;text-align:center;">
+          <i class="fas fa-database" style="font-size:2.5rem;color:var(--primary);margin-bottom:16px;display:block;"></i>
+          <h3 style="margin-bottom:8px;color:var(--primary);">Full Database</h3>
+          <p style="font-size:0.83rem;color:#666;margin-bottom:20px;">Export all enquiries and applications as a single JSON file.</p>
+          <button class="btn btn-primary" style="width:100%;" onclick="GYTODB.exportAll()"><i class="fas fa-download"></i> Export JSON</button>
+        </div>
+        <div class="panel" style="padding:32px;text-align:center;">
+          <i class="fas fa-envelope" style="font-size:2.5rem;color:var(--secondary);margin-bottom:16px;display:block;"></i>
+          <h3 style="margin-bottom:8px;color:var(--primary);">Enquiries CSV</h3>
+          <p style="font-size:0.83rem;color:#666;margin-bottom:20px;">Export all contact form submissions as a spreadsheet-ready CSV.</p>
+          <button class="btn btn-orange" style="width:100%;" onclick="GYTODB.exportCSV('enquiry')"><i class="fas fa-file-csv"></i> Export CSV</button>
+        </div>
+        <div class="panel" style="padding:32px;text-align:center;">
+          <i class="fas fa-user-tie" style="font-size:2.5rem;color:var(--green);margin-bottom:16px;display:block;"></i>
+          <h3 style="margin-bottom:8px;color:var(--primary);">Applications CSV</h3>
+          <p style="font-size:0.83rem;color:#666;margin-bottom:20px;">Export all job applications as a spreadsheet-ready CSV.</p>
+          <button class="btn btn-green" style="width:100%;" onclick="GYTODB.exportCSV('application')"><i class="fas fa-file-csv"></i> Export CSV</button>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:24px;padding:28px;">
+        <h3 style="color:var(--red);margin-bottom:16px;"><i class="fas fa-exclamation-triangle" style="margin-right:8px;"></i>Danger Zone</h3>
+        <p style="font-size:0.88rem;color:#666;margin-bottom:20px;">These actions are permanent and cannot be undone. Export your data first.</p>
+        <div style="display:flex;gap:12px;">
+          <button class="btn btn-red" onclick="clearTable('enquiry')"><i class="fas fa-trash"></i> Clear All Enquiries</button>
+          <button class="btn btn-red" onclick="clearTable('application')"><i class="fas fa-trash"></i> Clear All Applications</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── DETAIL MODAL ── -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    <h3 id="modalTitle">Record Detail</h3>
+    <div id="modalBody"></div>
+    <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;" id="modalActions"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/database.js"></script>
+<script>
+// ── Auth ──────────────────────────────────────────────────────
+const ADMIN_USER = 'gyto.admin';
+const ADMIN_PASS = 'Gyto@2024!';   // Change this after first login
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display   = 'block';
+    refreshAll();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+document.getElementById('loginPass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+function doLogout() {
+  document.getElementById('dashboard').style.display   = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+// ── Navigation ────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'enquiries')    renderEnquiries();
+  if (name === 'applications') renderApplications();
+}
+
+// ── Refresh ───────────────────────────────────────────────────
+function refreshAll() {
+  renderStats();
+  renderLatest();
+  renderEnquiries();
+  renderApplications();
+  document.getElementById('lastRefresh').textContent =
+    'Last refreshed: ' + new Date().toLocaleTimeString();
+}
+
+// ── Stats row ─────────────────────────────────────────────────
+function renderStats() {
+  const enqs  = GYTODB.getEnquiries();
+  const apps  = GYTODB.getApplications();
+  const newE  = enqs.filter(r => r.status === 'new').length;
+  const newA  = apps.filter(r => r.status === 'new').length;
+
+  document.getElementById('badgeEnquiries').textContent    = newE;
+  document.getElementById('badgeApplications').textContent = newA;
+
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fas fa-envelope"></i></div>
+      <div><div class="stat-num">${enqs.length}</div><div class="stat-label">Total Enquiries</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange"><i class="fas fa-bell"></i></div>
+      <div><div class="stat-num">${newE}</div><div class="stat-label">New / Unread Enquiries</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-user-tie"></i></div>
+      <div><div class="stat-num">${apps.length}</div><div class="stat-label">Total Applications</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon gold"><i class="fas fa-star"></i></div>
+      <div><div class="stat-num">${newA}</div><div class="stat-label">New Applications</div></div>
+    </div>`;
+}
+
+// ── Latest previews ───────────────────────────────────────────
+function renderLatest() {
+  const enqs = GYTODB.getEnquiries().slice(0, 5);
+  const apps = GYTODB.getApplications().slice(0, 5);
+
+  document.getElementById('latestEnquiries').innerHTML = enqs.length
+    ? '<table>' + enqs.map(r => `
+        <tr style="border-bottom:1px solid #f0f0f0;">
+          <td style="padding:10px 16px;font-size:0.83rem;">${r.firstName||''} ${r.lastName||''}</td>
+          <td style="padding:10px 16px;font-size:0.8rem;color:#888;">${fmtDate(r.createdAt)}</td>
+          <td style="padding:10px 16px;">${badge(r.status)}</td>
+          <td style="padding:10px 16px;"><button class="btn btn-sm btn-primary" onclick="openModal('enquiry','${r.id}')">View</button></td>
+        </tr>`).join('') + '</table>'
+    : '<div class="empty-state" style="padding:30px;"><i class="fas fa-inbox"></i><p>No enquiries yet.</p></div>';
+
+  document.getElementById('latestApplications').innerHTML = apps.length
+    ? '<table>' + apps.map(r => `
+        <tr style="border-bottom:1px solid #f0f0f0;">
+          <td style="padding:10px 16px;font-size:0.83rem;">${r.firstName||''} ${r.lastName||''}</td>
+          <td style="padding:10px 16px;font-size:0.8rem;color:#888;">${fmtDate(r.createdAt)}</td>
+          <td style="padding:10px 16px;">${badge(r.status)}</td>
+          <td style="padding:10px 16px;"><button class="btn btn-sm btn-primary" onclick="openModal('application','${r.id}')">View</button></td>
+        </tr>`).join('') + '</table>'
+    : '<div class="empty-state" style="padding:30px;"><i class="fas fa-user-slash"></i><p>No applications yet.</p></div>';
+}
+
+// ── Enquiries table ───────────────────────────────────────────
+function renderEnquiries() {
+  const q    = (document.getElementById('searchEnquiry').value || '').toLowerCase();
+  const rows = GYTODB.getEnquiries().filter(r =>
+    !q ||
+    (r.firstName + ' ' + r.lastName).toLowerCase().includes(q) ||
+    (r.email  || '').toLowerCase().includes(q) ||
+    (r.service|| '').toLowerCase().includes(q) ||
+    (r.phone  || '').toLowerCase().includes(q)
+  );
+
+  const empty = document.getElementById('enquiriesEmpty');
+  const body  = document.getElementById('enquiriesBody');
+
+  if (!rows.length) { body.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  body.innerHTML = rows.map(r => `
+    <tr>
+      <td><code style="font-size:0.75rem;">${r.id}</code></td>
+      <td style="white-space:nowrap;">${fmtDate(r.createdAt)}</td>
+      <td>${r.firstName||''} ${r.lastName||''}</td>
+      <td><a href="mailto:${r.email||''}" style="color:var(--primary);">${r.email||'—'}</a></td>
+      <td>${r.phone||'—'}</td>
+      <td>${r.service||'General'}</td>
+      <td>${badge(r.status)}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-sm btn-primary" onclick="openModal('enquiry','${r.id}')">View</button>
+        <button class="btn btn-sm btn-red" style="margin-left:4px;" onclick="deleteRec('enquiry','${r.id}')"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`).join('');
+}
+
+// ── Applications table ────────────────────────────────────────
+function renderApplications() {
+  const q    = (document.getElementById('searchApplication').value || '').toLowerCase();
+  const rows = GYTODB.getApplications().filter(r =>
+    !q ||
+    (r.firstName + ' ' + r.lastName).toLowerCase().includes(q) ||
+    (r.email || '').toLowerCase().includes(q) ||
+    (r.phone || '').toLowerCase().includes(q)
+  );
+
+  const empty = document.getElementById('applicationsEmpty');
+  const body  = document.getElementById('applicationsBody');
+
+  if (!rows.length) { body.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  body.innerHTML = rows.map(r => `
+    <tr>
+      <td><code style="font-size:0.75rem;">${r.id}</code></td>
+      <td style="white-space:nowrap;">${fmtDate(r.createdAt)}</td>
+      <td>${r.firstName||''} ${r.lastName||''}</td>
+      <td><a href="mailto:${r.email||''}" style="color:var(--primary);">${r.email||'—'}</a></td>
+      <td>${r.phone||'—'}</td>
+      <td>${badge(r.status)}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-sm btn-primary" onclick="openModal('application','${r.id}')">View</button>
+        <button class="btn btn-sm btn-red" style="margin-left:4px;" onclick="deleteRec('application','${r.id}')"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`).join('');
+}
+
+// ── Modal ─────────────────────────────────────────────────────
+function openModal(type, id) {
+  const list = type === 'enquiry' ? GYTODB.getEnquiries() : GYTODB.getApplications();
+  const r    = list.find(x => x.id === id);
+  if (!r) return;
+
+  GYTODB.updateStatus(type, id, r.status === 'new' ? 'read' : r.status);
+  refreshAll();
+
+  document.getElementById('modalTitle').textContent =
+    (type === 'enquiry' ? 'Enquiry' : 'Application') + ' – ' + r.id;
+
+  const skip = ['id','type','createdAt','updatedAt'];
+  const labels = {
+    firstName:'First Name', lastName:'Last Name', email:'Email', phone:'Phone',
+    company:'Company', service:'Service of Interest', message:'Message',
+    status:'Status', ref1Name:'Referee 1', ref1Phone:'Referee 1 Phone',
+    ref2Name:'Referee 2', ref2Phone:'Referee 2 Phone',
+    nok1Name:'Next of Kin 1', nok1Phone:'NOK 1 Phone',
+    nok2Name:'Next of Kin 2', nok2Phone:'NOK 2 Phone',
+  };
+
+  document.getElementById('modalBody').innerHTML =
+    `<div class="detail-row"><span class="detail-label">Record ID</span><span class="detail-val"><code>${r.id}</code></span></div>
+     <div class="detail-row"><span class="detail-label">Submitted</span><span class="detail-val">${fmtDate(r.createdAt)}</span></div>
+     <hr class="detail-divider" />` +
+    Object.keys(r).filter(k => !skip.includes(k)).map(k =>
+      `<div class="detail-row">
+         <span class="detail-label">${labels[k] || k}</span>
+         <span class="detail-val">${r[k] || '—'}</span>
+       </div>`
+    ).join('');
+
+  document.getElementById('modalActions').innerHTML = `
+    <button class="btn btn-primary" onclick="setStatus('${type}','${id}','read')">Mark Read</button>
+    <button class="btn btn-green"   onclick="setStatus('${type}','${id}','replied')">Mark Replied</button>
+    <button class="btn btn-red"     onclick="setStatus('${type}','${id}','archived')">Archive</button>
+    <a class="btn btn-orange" href="mailto:${r.email||''}?subject=Re: Your ${type==='enquiry'?'Enquiry':'Application'} – GYTO Security&body=Dear ${r.firstName||''},%0D%0A%0D%0AThank you for contacting GYTO Success Company.%0D%0A%0D%0A">
+      <i class="fas fa-reply"></i> Reply by Email
+    </a>`;
+
+  document.getElementById('detailModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('detailModal').classList.remove('open');
+}
+document.getElementById('detailModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+function setStatus(type, id, status) {
+  GYTODB.updateStatus(type, id, status);
+  closeModal();
+  refreshAll();
+}
+
+function deleteRec(type, id) {
+  if (!confirm('Delete this record permanently?')) return;
+  GYTODB.deleteRecord(type, id);
+  refreshAll();
+}
+
+function clearTable(type) {
+  if (!confirm('This will permanently delete ALL ' + type + ' records. Are you sure?')) return;
+  const key = type === 'enquiry' ? 'gyto_enquiries' : 'gyto_applications';
+  localStorage.removeItem(key);
+  refreshAll();
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-KE', { day:'2-digit', month:'short', year:'numeric' }) +
+    ' ' + d.toLocaleTimeString('en-KE', { hour:'2-digit', minute:'2-digit' });
+}
+function badge(status) {
+  const map = { new:'badge-new', read:'badge-read', replied:'badge-replied', archived:'badge-archived' };
+  return `<span class="badge ${map[status]||'badge-new'}">${status||'new'}</span>`;
+}
+</script>
+</body>
+</html>
+
+
