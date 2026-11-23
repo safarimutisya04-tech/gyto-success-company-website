@@ -405,20 +405,22 @@ button,
 }
 
 /* ── 13. iOS safe-area insets (notch / home bar) ────────────── */
-.navbar {
-  padding-left:  env(safe-area-inset-left,  0px);
-  padding-right: env(safe-area-inset-right, 0px);
-}
-.top-bar {
-  padding-left:  env(safe-area-inset-left,  0px);
-  padding-right: env(safe-area-inset-right, 0px);
-}
-.footer {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-.whatsapp-float {
-  /* Shift above home bar on iOS */
-  bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+/* Only apply on devices that actually have notches              */
+@supports (padding: max(0px)) {
+  .navbar {
+    padding-left:  max(env(safe-area-inset-left,  0px), 0px);
+    padding-right: max(env(safe-area-inset-right, 0px), 0px);
+  }
+  .top-bar {
+    padding-left:  max(env(safe-area-inset-left,  0px), 0px);
+    padding-right: max(env(safe-area-inset-right, 0px), 0px);
+  }
+  .footer {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 0px);
+  }
+  .whatsapp-float {
+    bottom: calc(28px + max(env(safe-area-inset-bottom, 0px), 0px));
+  }
 }
 
 /* ── 14. High-DPI / Retina display ──────────────────────────── */

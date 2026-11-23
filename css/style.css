@@ -2194,19 +2194,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* iOS safe-area insets (notch / home bar on iPhone X+) */
-.navbar {
-  padding-left:  env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-}
-.top-bar {
-  padding-left:  env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-}
-footer {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
 /* Remove tap highlight on Android Chrome / iOS Safari */
 a, button, .btn, .nav-link, .service-card, .sector-card {
   -webkit-tap-highlight-color: transparent;
@@ -3082,6 +3069,8 @@ body {
 /* ── Additional full-width guarantee for inner pages ──────── */
 html {
   overflow-x: hidden;
+  /* Prevent scrollbar from creating right gap */
+  scrollbar-gutter: stable;
 }
 
 /* Navbar must never be clipped — it's sticky */
