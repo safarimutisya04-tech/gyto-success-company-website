@@ -487,6 +487,25 @@ document.addEventListener('DOMContentLoaded', function () {
         GYTOREVIEWSDB.saveReview(data);
       }
 
+      // Send email notification to info@gytosecurity.co.ke
+      const stars     = '★'.repeat(data.rating) + '☆'.repeat(5 - data.rating);
+      const subject   = encodeURIComponent('New Review – ' + data.name + ' (' + stars + ') – GYTO Website');
+      const emailBody = encodeURIComponent(
+        'A new client review has been submitted on the GYTO website.\n\n' +
+        '─────────────────────────────────\n' +
+        'Name     : ' + data.name + '\n' +
+        'Company  : ' + (data.company || 'Not provided') + '\n' +
+        'Service  : ' + (data.service || 'General') + '\n' +
+        'Rating   : ' + stars + ' (' + data.rating + '/5)\n' +
+        '─────────────────────────────────\n\n' +
+        'REVIEW:\n' + data.text + '\n\n' +
+        '─────────────────────────────────\n' +
+        'Submitted: ' + new Date().toLocaleString('en-KE') + '\n\n' +
+        'View all reviews: https://gytosuccess.co.ke/#reviews\n' +
+        'Admin dashboard:  https://gytosuccess.co.ke/admin.html\n'
+      );
+      window.location.href = 'mailto:info@gytosecurity.co.ke?subject=' + subject + '&body=' + emailBody;
+
       // Show success message
       const btn     = reviewForm.querySelector('.review-submit-btn');
       const success = document.getElementById('reviewSuccess');
