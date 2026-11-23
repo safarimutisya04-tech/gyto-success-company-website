@@ -423,6 +423,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const starsEl   = document.getElementById('avgStars');
     const totalEl   = document.getElementById('totalReviews');
     const fiveEl    = document.getElementById('fiveStarCount');
+    const layout    = document.querySelector('.reviews-layout');
+    const feedPanel = document.querySelector('.reviews-feed-panel');
     if (!feed) return;
 
     const reviews = typeof GYTOREVIEWSDB !== 'undefined' ? GYTOREVIEWSDB.getReviews() : [];
@@ -436,9 +438,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!reviews.length) {
       if (empty) empty.style.display = 'block';
+      if (layout) layout.classList.remove('has-reviews');
+      if (feedPanel) feedPanel.style.display = 'none';
       return;
     }
     if (empty) empty.style.display = 'none';
+    if (layout) layout.classList.add('has-reviews');
+    if (feedPanel) feedPanel.style.display = 'flex';
 
     feed.innerHTML = reviews.map(r => `
       <div class="review-card">

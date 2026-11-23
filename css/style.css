@@ -2418,6 +2418,25 @@ input, select, textarea {
   border-top: 4px solid var(--accent);
 }
 
+/* When reviews feed is empty, show form full width */
+.reviews-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 40px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* Show two columns only when reviews exist */
+.reviews-layout.has-reviews {
+  grid-template-columns: 1fr 1.3fr;
+}
+
+@media (max-width: 768px) {
+  .reviews-layout,
+  .reviews-layout.has-reviews { grid-template-columns: 1fr; }
+}
+
 /* Stats row at top */
 .reviews-stats {
   display: -webkit-box;
