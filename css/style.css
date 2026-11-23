@@ -3105,3 +3105,12 @@ html {
     overflow-x: hidden !important;
   }
 }
+
+/* ── Remove gap between CTA and footer ──────────────────────── */
+.cta-section {
+  margin-bottom: 0 !important;
+  padding-bottom: 72px !important;
+}
+.footer {
+  margin-top: 0 !important;
+}
