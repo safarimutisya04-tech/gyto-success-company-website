@@ -2272,7 +2272,7 @@ input, select, textarea {
 @media (max-height: 500px) and (orientation: landscape) {
   .hero { min-height: 100vh; padding: 24px 0; }
   .hero h1 { font-size: 1.6rem; }
-  .nav-menu { max-height: 80vh; overflow-y: auto; }
+  .nav-menu { max-height: calc(100vh - 68px); overflow-y: auto; }
 }
 
 /* Large desktop (≥1400px) — cap container and scale up */
@@ -3040,22 +3040,21 @@ section,
 }
 
 /* ── DEFINITIVE OVERFLOW FIX ─────────────────────────────── */
-/* Prevents any element from causing horizontal scroll/gap   */
-html {
-  overflow-x: clip !important;
-}
+/* Targeted fix — only clip the wrapper, not html/body       */
+/* This preserves fixed positioned elements (nav menu, AI,   */
+/* WhatsApp) while preventing horizontal scroll gaps         */
 
 body {
-  overflow-x: clip !important;
+  overflow-x: hidden !important;
   width: 100% !important;
 }
 
+/* Full-width sections — no side gaps */
 .footer,
 .footer-main,
 .footer-bottom,
 .cta-section,
 .top-bar,
-.navbar,
 .hero,
 .stats-bar,
 .clients-section,
@@ -3078,4 +3077,23 @@ body {
 .whatsapp-float,
 .scroll-top {
   position: fixed !important;
+}
+
+/* ── Additional full-width guarantee for inner pages ──────── */
+html {
+  overflow-x: hidden;
+}
+
+/* Navbar must never be clipped — it's sticky */
+.navbar {
+  overflow: visible !important;
+}
+
+/* Nav menu dropdown must be fully visible on mobile */
+@media (max-width: 768px) {
+  .nav-menu {
+    max-height: calc(100vh - 68px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
 }
