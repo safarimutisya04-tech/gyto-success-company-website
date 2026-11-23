@@ -23,12 +23,12 @@
          JS polyfill in main.js handles older Safari ─────── */
 html {
   scroll-behavior: smooth;
-  /* Momentum scrolling on iOS */
   -webkit-overflow-scrolling: touch;
-  /* Prevent text inflation on orientation change */
   -webkit-text-size-adjust: 100%;
   -moz-text-size-adjust:    100%;
   text-size-adjust:         100%;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 /* ── 4. Font smoothing ──────────────────────────────────────── */
