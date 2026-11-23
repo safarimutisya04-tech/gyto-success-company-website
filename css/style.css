@@ -2288,18 +2288,11 @@ input, select, textarea {
   width: 100%;
 }
 
-/* Fade edges */
+/* Fade edges removed — no white blur on sides */
 .clients-ticker-wrap::before,
 .clients-ticker-wrap::after {
-  content: '';
-  position: absolute;
-  top: 0; bottom: 0;
-  width: 80px;
-  z-index: 2;
-  pointer-events: none;
+  display: none;
 }
-.clients-ticker-wrap::before { left: 0;  background: linear-gradient(to right, var(--white), transparent); }
-.clients-ticker-wrap::after  { right: 0; background: linear-gradient(to left,  var(--white), transparent); }
 
 .clients-ticker {
   display: -webkit-box;
