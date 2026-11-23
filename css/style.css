@@ -3038,3 +3038,44 @@ section,
 * {
   min-width: 0;
 }
+
+/* ── DEFINITIVE OVERFLOW FIX ─────────────────────────────── */
+/* Prevents any element from causing horizontal scroll/gap   */
+html {
+  overflow-x: clip !important;
+}
+
+body {
+  overflow-x: clip !important;
+  width: 100% !important;
+}
+
+.footer,
+.footer-main,
+.footer-bottom,
+.cta-section,
+.top-bar,
+.navbar,
+.hero,
+.stats-bar,
+.clients-section,
+.sectors-section,
+.about-intro,
+.services-section,
+.why-us,
+.reviews-section,
+.page-header {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Stop the AI panel and WhatsApp float from causing layout shift */
+.gyto-ai-panel,
+.gyto-ai-float,
+.whatsapp-float,
+.scroll-top {
+  position: fixed !important;
+}
