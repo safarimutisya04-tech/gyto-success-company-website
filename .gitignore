@@ -1,0 +1,15 @@
+# Vercel (removed — not used)
+.vercel
+vercel.json
+.env.local
+
+# Node
+node_modules/
+npm-debug.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local dev server
+server.js

@@ -1,0 +1,46 @@
+{
+  "name": "GYTO Success Company Limited",
+  "short_name": "GYTO Security",
+  "description": "Professional security solutions in Kenya – manned guarding, CCTV, mobile patrols and more.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0d1530",
+  "theme_color": "#1a2a6c",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "security"],
+  "shortcuts": [
+    {
+      "name": "Contact Us",
+      "short_name": "Contact",
+      "url": "/contact.html",
+      "description": "Get in touch with GYTO Security"
+    },
+    {
+      "name": "Our Services",
+      "short_name": "Services",
+      "url": "/services.html",
+      "description": "View all security services"
+    },
+    {
+      "name": "Apply for a Job",
+      "short_name": "Recruitment",
+      "url": "/recruitment.html",
+      "description": "Submit a job application"
+    }
+  ]
+}
